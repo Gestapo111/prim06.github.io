@@ -1,1 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación: Soluciones Químicas (Química)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #333;
+        }
+        .quiz-container {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+        }
+        .question {
+            margin-bottom: 15px;
+        }
+        .options {
+            list-style-type: none;
+            padding: 0;
+        }
+        .options li {
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #results {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            width: 100%;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Evaluación: Soluciones Químicas (Química)</h1>
+    <div class="quiz-container">
+        <div id="quiz"></div>
+        <button id="submit">Enviar respuestas</button>
+        <div id="results"></div>
+    </div>
+    <footer>
+        &copy; Derechos Reservados Prof. Alberto Sanchez
+    </footer>
+    <script>
+        const quizData = [
+            {
+                question: "¿Qué es una solución?",
+                answers: [
+                    { text: "Una mezcla homogénea de dos o más sustancias.", correct: true },
+                    { text: "Una mezcla heterogénea de dos o más sustancias.", correct: false },
+                    { text: "Un compuesto químico puro.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es el soluto?",
+                answers: [
+                    { text: "La sustancia que se disuelve en un solvente.", correct: true },
+                    { text: "La sustancia que disuelve al soluto.", correct: false },
+                    { text: "Una sustancia que no se disuelve en agua.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es el solvente?",
+                answers: [
+                    { text: "La sustancia que disuelve al soluto.", correct: true },
+                    { text: "La sustancia que se disuelve en un soluto.", correct: false },
+                    { text: "Una sustancia que no se disuelve en agua.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la concentración de una solución?",
+                answers: [
+                    { text: "La cantidad de soluto disuelto en una cantidad específica de solvente.", correct: true },
+                    { text: "La cantidad de solvente disuelto en una cantidad específica de soluto.", correct: false },
+                    { text: "La cantidad de agua en una solución.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la solubilidad?",
+                answers: [
+                    { text: "La capacidad de una sustancia para disolverse en un solvente.", correct: true },
+                    { text: "La capacidad de una sustancia para evaporarse.", correct: false },
+                    { text: "La capacidad de una sustancia para reaccionar con otra.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una solución saturada?",
+                answers: [
+                    { text: "Una solución que contiene la máxima cantidad de soluto que puede disolver a una temperatura específica.", correct: true },
+                    { text: "Una solución que puede disolver más soluto.", correct: false },
+                    { text: "Una solución que no contiene soluto.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una solución insaturada?",
+                answers: [
+                    { text: "Una solución que puede disolver más soluto.", correct: true },
+                    { text: "Una solución que contiene la máxima cantidad de soluto que puede disolver.", correct: false },
+                    { text: "Una solución que no contiene soluto.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una solución sobresaturada?",
+                answers: [
+                    { text: "Una solución que contiene más soluto del que puede disolver a una temperatura específica.", correct: true },
+                    { text: "Una solución que puede disolver más soluto.", correct: false },
+                    { text: "Una solución que no contiene soluto.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una disolución?",
+                answers: [
+                    { text: "El proceso de disolver un soluto en un solvente para formar una solución.", correct: true },
+                    { text: "El proceso de separar una mezcla en sus componentes.", correct: false },
+                    { text: "El proceso de evaporación de un líquido.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la molaridad?",
+                answers: [
+                    { text: "El número de moles de soluto disuelto en un litro de solución.", correct: true },
+                    { text: "El número de moles de soluto disuelto en un kilogramo de solvente.", correct: false },
+                    { text: "El número de moles de solvente disuelto en un litro de solución.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la molalidad?",
+                answers: [
+                    { text: "El número de moles de soluto disuelto en un kilogramo de solvente.", correct: true },
+                    { text: "El número de moles de soluto disuelto en un litro de solución.", correct: false },
+                    { text: "El número de moles de solvente disuelto en un litro de solución.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la fracción molar?",
+                answers: [
+                    { text: "La proporción del número de moles de un componente al número total de moles en una solución.", correct: true },
+                    { text: "La proporción del número de átomos de un elemento al número total de átomos en un compuesto.", correct: false },
+                    { text: "La proporción del volumen de un componente al volumen total de una solución.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la normalidad?",
+                answers: [
+                    { text: "El número de equivalentes de soluto disuelto en un litro de solución.", correct: true },
+                    { text: "El número de moles de soluto disuelto en un kilogramo de solvente.", correct: false },
+                    { text: "El número de moles de soluto disuelto en un litro de solución.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la dilución?",
+                answers: [
+                    { text: "El proceso de reducir la concentración de un soluto en una solución agregando más solvente.", correct: true },
+                    { text: "El proceso de aumentar la concentración de un soluto en una solución.", correct: false },
+                    { text: "El proceso de separar una mezcla en sus componentes.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la osmosis?",
+                answers: [
+                    { text: "El movimiento de solvente a través de una membrana semipermeable desde una solución menos concentrada a una más concentrada.", correct: true },
+                    { text: "El movimiento de soluto a través de una membrana semipermeable desde una solución más concentrada a una menos concentrada.", correct: false },
+                    { text: "El movimiento de soluto a través de una membrana impermeable.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la presión osmótica?",
+                answers: [
+                    { text: "La presión necesaria para detener el flujo de solvente a través de una membrana semipermeable.", correct: true },
+                    { text: "La presión necesaria para aumentar el flujo de soluto a través de una membrana semipermeable.", correct: false },
+                    { text: "La presión necesaria para disolver un soluto en un solvente.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la electrolisis?",
+                answers: [
+                    { text: "El proceso de descomposición de una sustancia por una corriente eléctrica.", correct: true },
+                    { text: "El proceso de disolver un soluto en un solvente.", correct: false },
+                    { text: "El proceso de evaporación de un líquido.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una disolución coloidal?",
+                answers: [
+                    { text: "Una mezcla en la que las partículas del soluto están dispersas pero no disueltas completamente.", correct: true },
+                    { text: "Una mezcla en la que el soluto se ha disuelto completamente.", correct: false },
+                    { text: "Una mezcla en la que el soluto no se disuelve en absoluto.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es el efecto Tyndall?",
+                answers: [
+                    { text: "La dispersión de la luz por las partículas en una disolución coloidal.", correct: true },
+                    { text: "La evaporación de un solvente en una solución.", correct: false },
+                    { text: "La precipitación de un soluto en una solución.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es una suspensión?",
+                answers: [
+                    { text: "Una mezcla en la que las partículas del soluto están suspendidas en el solvente y pueden sedimentarse.", correct: true },
+                    { text: "Una mezcla en la que el soluto se ha disuelto completamente.", correct: false },
+                    { text: "Una mezcla en la que el soluto no se disuelve en absoluto.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la destilación?",
+                answers: [
+                    { text: "El proceso de separar los componentes de una mezcla líquida mediante ebullición y condensación.", correct: true },
+                    { text: "El proceso de disolver un soluto en un solvente.", correct: false },
+                    { text: "El proceso de evaporación de un líquido.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la cromatografía?",
+                answers: [
+                    { text: "Una técnica para separar los componentes de una mezcla basándose en sus diferentes afinidades por una fase móvil y una fase estacionaria.", correct: true },
+                    { text: "Una técnica para disolver un soluto en un solvente.", correct: false },
+                    { text: "Una técnica para medir la concentración de una solución.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la filtración?",
+                answers: [
+                    { text: "El proceso de separar un sólido de un líquido mediante el uso de un filtro.", correct: true },
+                    { text: "El proceso de disolver un soluto en un solvente.", correct: false },
+                    { text: "El proceso de evaporación de un líquido.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la cristalización?",
+                answers: [
+                    { text: "El proceso de formar cristales a partir de una solución.", correct: true },
+                    { text: "El proceso de disolver un soluto en un solvente.", correct: false },
+                    { text: "El proceso de evaporación de un líquido.", correct: false }
+                ]
+            },
+            {
+                question: "¿Qué es la solvatación?",
+                answers: [
+                    { text: "La interacción entre las moléculas de un soluto y las moléculas de un solvente.", correct: true },
+                    { text: "El proceso de disolver un soluto en un solvente.", correct: false },
+                    { text: "El proceso de evaporación de un líquido.", correct: false }
+                ]
+            }
+        ];
+
+        let attempt = 0;
+        const maxAttempts = 3;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function loadQuiz() {
+            const quizContainer = document.getElementById('quiz');
+            quizContainer.innerHTML = '';
+            quizData.forEach((data, index) => {
+                const questionContainer = document.createElement('div');
+                questionContainer.className = 'question';
+
+                const questionTitle = document.createElement('h3');
+                questionTitle.innerText = `${index + 1}. ${data.question}`;
+                questionContainer.appendChild(questionTitle);
+
+                const optionsList = document.createElement('ul');
+                optionsList.className = 'options';
+
+                shuffle(data.answers).forEach(answer => {
+                    const option = document.createElement('li');
+                    const optionLabel = document.createElement('label');
+                    const optionInput = document.createElement('input');
+                    optionInput.type = 'radio';
+                    optionInput.name = `question${index}`;
+                    optionInput.value = answer.correct;
+                    optionLabel.appendChild(optionInput);
+                    optionLabel.appendChild(document.createTextNode(answer.text));
+                    option.appendChild(optionLabel);
+                    optionsList.appendChild(option);
+                });
+
+                questionContainer.appendChild(optionsList);
+                quizContainer.appendChild(questionContainer);
+            });
+        }
+
+        function submitQuiz() {
+            if (attempt >= maxAttempts) {
+                alert('Has alcanzado el número máximo de intentos.');
+                return;
+            }
+
+            const resultsContainer = document.getElementById('results');
+            const answers = document.querySelectorAll('input[type="radio"]:checked');
+            let score = 0;
+
+            quizData.forEach((data, index) => {
+                const selected = answers[index] ? answers[index].value === 'true' : null;
+                if (selected === true) {
+                    score += 0.4; // Each correct answer is worth 0.4 points
+                }
+            });
+
+            score = Math.round(score * 10) / 10; // Round to one decimal place
+            let feedback = quizData.map((data, index) => {
+                const selected = answers[index] ? answers[index].value === 'true' : null;
+                let result;
+                if (selected === null) {
+                    result = "No contestada";
+                } else if (selected === true) {
+                    result = "Correcta";
+                } else {
+                    result = "Incorrecta";
+                }
+                return `<p>${index + 1}. ${result}</p>`;
+            }).join("");
+
+            resultsContainer.innerHTML = `<h3>Resultados:</h3><p>Puntaje: ${score} / 10</p>${feedback}`;
+
+            attempt++;
+            if (attempt >= maxAttempts) {
+                alert('Has alcanzado el número máximo de intentos.');
+            }
+        }
+
+        document.getElementById('submit').addEventListener('click', submitQuiz);
+
+        loadQuiz();
+    </script>
+</body>
+</html>
 
