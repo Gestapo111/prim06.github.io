@@ -3,366 +3,593 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evaluación: Soluciones Químicas (Química)</title>
+    <title>Unidad 6: Soluciones Químicas</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        h1 {
-            color: #333;
-        }
-        .quiz-container {
-            background-color: #fff;
             padding: 20px;
-            margin: 20px 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            max-width: 800px;
+        }
+        h1, h2 {
+            text-align: center;
         }
         .question {
-            margin-bottom: 15px;
+            margin: 20px 0;
         }
-        .options {
-            list-style-type: none;
-            padding: 0;
-        }
-        .options li {
+        .question label {
+            font-weight: bold;
+            display: block;
             margin-bottom: 10px;
         }
-        button {
+        .question .options {
+            margin-left: 20px;
+        }
+        .question .options input {
+            margin-right: 10px;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .popup-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+        .popup-content input {
+            margin-bottom: 20px;
+            padding: 15px;
+            width: 80%;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .popup-content button {
+            padding: 15px 30px;
             background-color: #28a745;
             color: #fff;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 5px;
             font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
-        button:hover {
-            background-color: #218838;
-        }
-        #results {
-            margin-top: 20px;
-            font-size: 18px;
-        }
-        footer {
-            background-color: #333;
+        button.submit-btn {
+            padding: 15px 30px;
+            background-color: #007bff;
             color: #fff;
-            padding: 10px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: block;
             width: 100%;
             text-align: center;
-            position: fixed;
-            bottom: 0;
+        }
+        button.submit-btn:hover {
+            background-color: #0056b3;
+        }
+        #timer {
+            text-align: center;
+            font-size: 20px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Evaluación: Soluciones Químicas (Química)</h1>
-    <div class="quiz-container">
-        <div id="quiz"></div>
-        <button id="submit">Enviar respuestas</button>
-        <div id="results"></div>
+
+<div class="popup" id="popup">
+    <div class="popup-content">
+        <h2>Complete la siguiente información</h2>
+        <input type="text" id="nombre" placeholder="Nombre Completo" required>
+        <input type="text" id="nie" placeholder="NIE" required>
+        <button onclick="validatePopup()">Continuar</button>
     </div>
-    <footer>
-        &copy; Derechos Reservados Prof. Alberto Sanchez
-    </footer>
-    <script>
-        const quizData = [
-            {
-                question: "¿Qué es una solución?",
-                answers: [
-                    { text: "Una mezcla homogénea de dos o más sustancias.", correct: true },
-                    { text: "Una mezcla heterogénea de dos o más sustancias.", correct: false },
-                    { text: "Un compuesto químico puro.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es el soluto?",
-                answers: [
-                    { text: "La sustancia que se disuelve en un solvente.", correct: true },
-                    { text: "La sustancia que disuelve al soluto.", correct: false },
-                    { text: "Una sustancia que no se disuelve en agua.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es el solvente?",
-                answers: [
-                    { text: "La sustancia que disuelve al soluto.", correct: true },
-                    { text: "La sustancia que se disuelve en un soluto.", correct: false },
-                    { text: "Una sustancia que no se disuelve en agua.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la concentración de una solución?",
-                answers: [
-                    { text: "La cantidad de soluto disuelto en una cantidad específica de solvente.", correct: true },
-                    { text: "La cantidad de solvente disuelto en una cantidad específica de soluto.", correct: false },
-                    { text: "La cantidad de agua en una solución.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la solubilidad?",
-                answers: [
-                    { text: "La capacidad de una sustancia para disolverse en un solvente.", correct: true },
-                    { text: "La capacidad de una sustancia para evaporarse.", correct: false },
-                    { text: "La capacidad de una sustancia para reaccionar con otra.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una solución saturada?",
-                answers: [
-                    { text: "Una solución que contiene la máxima cantidad de soluto que puede disolver a una temperatura específica.", correct: true },
-                    { text: "Una solución que puede disolver más soluto.", correct: false },
-                    { text: "Una solución que no contiene soluto.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una solución insaturada?",
-                answers: [
-                    { text: "Una solución que puede disolver más soluto.", correct: true },
-                    { text: "Una solución que contiene la máxima cantidad de soluto que puede disolver.", correct: false },
-                    { text: "Una solución que no contiene soluto.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una solución sobresaturada?",
-                answers: [
-                    { text: "Una solución que contiene más soluto del que puede disolver a una temperatura específica.", correct: true },
-                    { text: "Una solución que puede disolver más soluto.", correct: false },
-                    { text: "Una solución que no contiene soluto.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una disolución?",
-                answers: [
-                    { text: "El proceso de disolver un soluto en un solvente para formar una solución.", correct: true },
-                    { text: "El proceso de separar una mezcla en sus componentes.", correct: false },
-                    { text: "El proceso de evaporación de un líquido.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la molaridad?",
-                answers: [
-                    { text: "El número de moles de soluto disuelto en un litro de solución.", correct: true },
-                    { text: "El número de moles de soluto disuelto en un kilogramo de solvente.", correct: false },
-                    { text: "El número de moles de solvente disuelto en un litro de solución.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la molalidad?",
-                answers: [
-                    { text: "El número de moles de soluto disuelto en un kilogramo de solvente.", correct: true },
-                    { text: "El número de moles de soluto disuelto en un litro de solución.", correct: false },
-                    { text: "El número de moles de solvente disuelto en un litro de solución.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la fracción molar?",
-                answers: [
-                    { text: "La proporción del número de moles de un componente al número total de moles en una solución.", correct: true },
-                    { text: "La proporción del número de átomos de un elemento al número total de átomos en un compuesto.", correct: false },
-                    { text: "La proporción del volumen de un componente al volumen total de una solución.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la normalidad?",
-                answers: [
-                    { text: "El número de equivalentes de soluto disuelto en un litro de solución.", correct: true },
-                    { text: "El número de moles de soluto disuelto en un kilogramo de solvente.", correct: false },
-                    { text: "El número de moles de soluto disuelto en un litro de solución.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la dilución?",
-                answers: [
-                    { text: "El proceso de reducir la concentración de un soluto en una solución agregando más solvente.", correct: true },
-                    { text: "El proceso de aumentar la concentración de un soluto en una solución.", correct: false },
-                    { text: "El proceso de separar una mezcla en sus componentes.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la osmosis?",
-                answers: [
-                    { text: "El movimiento de solvente a través de una membrana semipermeable desde una solución menos concentrada a una más concentrada.", correct: true },
-                    { text: "El movimiento de soluto a través de una membrana semipermeable desde una solución más concentrada a una menos concentrada.", correct: false },
-                    { text: "El movimiento de soluto a través de una membrana impermeable.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la presión osmótica?",
-                answers: [
-                    { text: "La presión necesaria para detener el flujo de solvente a través de una membrana semipermeable.", correct: true },
-                    { text: "La presión necesaria para aumentar el flujo de soluto a través de una membrana semipermeable.", correct: false },
-                    { text: "La presión necesaria para disolver un soluto en un solvente.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la electrolisis?",
-                answers: [
-                    { text: "El proceso de descomposición de una sustancia por una corriente eléctrica.", correct: true },
-                    { text: "El proceso de disolver un soluto en un solvente.", correct: false },
-                    { text: "El proceso de evaporación de un líquido.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una disolución coloidal?",
-                answers: [
-                    { text: "Una mezcla en la que las partículas del soluto están dispersas pero no disueltas completamente.", correct: true },
-                    { text: "Una mezcla en la que el soluto se ha disuelto completamente.", correct: false },
-                    { text: "Una mezcla en la que el soluto no se disuelve en absoluto.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es el efecto Tyndall?",
-                answers: [
-                    { text: "La dispersión de la luz por las partículas en una disolución coloidal.", correct: true },
-                    { text: "La evaporación de un solvente en una solución.", correct: false },
-                    { text: "La precipitación de un soluto en una solución.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es una suspensión?",
-                answers: [
-                    { text: "Una mezcla en la que las partículas del soluto están suspendidas en el solvente y pueden sedimentarse.", correct: true },
-                    { text: "Una mezcla en la que el soluto se ha disuelto completamente.", correct: false },
-                    { text: "Una mezcla en la que el soluto no se disuelve en absoluto.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la destilación?",
-                answers: [
-                    { text: "El proceso de separar los componentes de una mezcla líquida mediante ebullición y condensación.", correct: true },
-                    { text: "El proceso de disolver un soluto en un solvente.", correct: false },
-                    { text: "El proceso de evaporación de un líquido.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la cromatografía?",
-                answers: [
-                    { text: "Una técnica para separar los componentes de una mezcla basándose en sus diferentes afinidades por una fase móvil y una fase estacionaria.", correct: true },
-                    { text: "Una técnica para disolver un soluto en un solvente.", correct: false },
-                    { text: "Una técnica para medir la concentración de una solución.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la filtración?",
-                answers: [
-                    { text: "El proceso de separar un sólido de un líquido mediante el uso de un filtro.", correct: true },
-                    { text: "El proceso de disolver un soluto en un solvente.", correct: false },
-                    { text: "El proceso de evaporación de un líquido.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la cristalización?",
-                answers: [
-                    { text: "El proceso de formar cristales a partir de una solución.", correct: true },
-                    { text: "El proceso de disolver un soluto en un solvente.", correct: false },
-                    { text: "El proceso de evaporación de un líquido.", correct: false }
-                ]
-            },
-            {
-                question: "¿Qué es la solvatación?",
-                answers: [
-                    { text: "La interacción entre las moléculas de un soluto y las moléculas de un solvente.", correct: true },
-                    { text: "El proceso de disolver un soluto en un solvente.", correct: false },
-                    { text: "El proceso de evaporación de un líquido.", correct: false }
-                ]
-            }
-        ];
+</div>
 
-        let attempt = 0;
-        const maxAttempts = 3;
+<div class="container" id="evaluation" style="display:none;">
+    <h1>Unidad 6: Soluciones Químicas</h1>
+    <div id="timer">Tiempo restante: 30:00</div>
 
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
+    <!-- Indicador 6.1 -->
+    <h2>Indicador 6.1: Tipos de dispersiones químicas</h2>
+    <div class="question">
+        <label>1. ¿Qué es una suspensión en química?</label>
+        <div class="options">
+            <label><input type="radio" name="q1" value="correcto" required> A. Una mezcla heterogénea donde las partículas se sedimentan con el tiempo.</label><br>
+            <label><input type="radio" name="q1" value="incorrecto" required> B. Una mezcla homogénea donde las partículas no se sedimentan.</label><br>
+            <label><input type="radio" name="q1" value="incorrecto" required> C. Una mezcla donde las partículas son invisibles a simple vista.</label><br>
+            <label><input type="radio" name="q1" value="incorrecto" required> D. Una mezcla de gases que no se pueden separar.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>2. ¿Cuál de las siguientes opciones describe mejor un coloide?</label>
+        <div class="options">
+            <label><input type="radio" name="q2" value="correcto" required> A. Una mezcla donde las partículas son lo suficientemente pequeñas para no sedimentarse pero lo suficientemente grandes para dispersar la luz.</label><br>
+            <label><input type="radio" name="q2" value="incorrecto" required> B. Una mezcla donde las partículas se sedimentan rápidamente.</label><br>
+            <label><input type="radio" name="q2" value="incorrecto" required> C. Una mezcla que no puede disolver partículas en absoluto.</label><br>
+            <label><input type="radio" name="q2" value="incorrecto" required> D. Una mezcla que solo existe en estado gaseoso.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>3. ¿Qué ocurre con las partículas en una solución verdadera?</label>
+        <div class="options">
+            <label><input type="radio" name="q3" value="correcto" required> A. Se disuelven completamente, creando una mezcla homogénea.</label><br>
+            <label><input type="radio" name="q3" value="incorrecto" required> B. Permanecen visibles y no se disuelven.</label><br>
+            <label><input type="radio" name="q3" value="incorrecto" required> C. Se sedimentan al fondo del recipiente.</label><br>
+            <label><input type="radio" name="q3" value="incorrecto" required> D. Flotan en la superficie de la solución.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>4. ¿Qué tipo de mezcla es una suspensión?</label>
+        <div class="options">
+            <label><input type="radio" name="q4" value="correcto" required> A. Heterogénea.</label><br>
+            <label><input type="radio" name="q4" value="incorrecto" required> B. Homogénea.</label><br>
+            <label><input type="radio" name="q4" value="incorrecto" required> C. Coloidal.</label><br>
+            <label><input type="radio" name="q4" value="incorrecto" required> D. Molecular.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>5. ¿Cuál de los siguientes es un ejemplo de un coloide?</label>
+        <div class="options">
+            <label><input type="radio" name="q5" value="correcto" required> A. La leche.</label><br>
+            <label><input type="radio" name="q5" value="incorrecto" required> B. El aire.</label><br>
+            <label><input type="radio" name="q5" value="incorrecto" required> C. El vinagre.</label><br>
+            <label><input type="radio" name="q5" value="incorrecto" required> D. El agua con sal.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>6. ¿Qué propiedad distingue a una solución de una suspensión?</label>
+        <div class="options">
+            <label><input type="radio" name="q6" value="correcto" required> A. Las partículas en una solución están completamente disueltas.</label><br>
+            <label><input type="radio" name="q6" value="incorrecto" required> B. Las partículas en una solución son visibles a simple vista.</label><br>
+            <label><input type="radio" name="q6" value="incorrecto" required> C. Las partículas en una suspensión son invisibles.</label><br>
+            <label><input type="radio" name="q6" value="incorrecto" required> D. Una solución es siempre una mezcla heterogénea.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>7. ¿Qué sucede con las partículas en un coloide cuando se aplica el efecto Tyndall?</label>
+        <div class="options">
+            <label><input type="radio" name="q7" value="correcto" required> A. Las partículas dispersan la luz, haciendo visible el haz de luz.</label><br>
+            <label><input type="radio" name="q7" value="incorrecto" required> B. Las partículas se sedimentan rápidamente.</label><br>
+            <label><input type="radio" name="q7" value="incorrecto" required> C. Las partículas se disuelven completamente.</label><br>
+            <label><input type="radio" name="q7" value="incorrecto" required> D. Las partículas reflejan toda la luz, bloqueando su paso.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>8. ¿Cuál es una característica común de todas las soluciones químicas?</label>
+        <div class="options">
+            <label><input type="radio" name="q8" value="correcto" required> A. Son mezclas homogéneas.</label><br>
+            <label><input type="radio" name="q8" value="incorrecto" required> B. Son siempre opacas.</label><br>
+            <label><input type="radio" name="q8" value="incorrecto" required> C. Contienen partículas grandes que sedimentan.</label><br>
+            <label><input type="radio" name="q8" value="incorrecto" required> D. Solo existen en estado sólido.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>9. ¿Qué es una solución verdadera?</label>
+        <div class="options">
+            <label><input type="radio" name="q9" value="correcto" required> A. Una mezcla homogénea donde las partículas están completamente disueltas.</label><br>
+            <label><input type="radio" name="q9" value="incorrecto" required> B. Una mezcla donde las partículas se sedimentan con el tiempo.</label><br>
+            <label><input type="radio" name="q9" value="incorrecto" required> C. Una mezcla donde las partículas son visibles a simple vista.</label><br>
+            <label><input type="radio" name="q9" value="incorrecto" required> D. Una mezcla que solo existe en estado sólido.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>10. ¿Cuál de las siguientes opciones describe mejor una suspensión?</label>
+        <div class="options">
+            <label><input type="radio" name="q10" value="correcto" required> A. Una mezcla donde las partículas se sedimentan al fondo si se deja reposar.</label><br>
+            <label><input type="radio" name="q10" value="incorrecto" required> B. Una mezcla donde las partículas se disuelven completamente.</label><br>
+            <label><input type="radio" name="q10" value="incorrecto" required> C. Una mezcla donde las partículas son invisibles.</label><br>
+            <label><input type="radio" name="q10" value="incorrecto" required> D. Una mezcla que siempre es transparente.</label>
+        </div>
+    </div>
+
+    <!-- Indicador 6.2 -->
+    <h2>Indicador 6.2: Propiedades de las soluciones químicas</h2>
+    <div class="question">
+        <label>11. ¿Qué propiedad describe la solubilidad de una sustancia?</label>
+        <div class="options">
+            <label><input type="radio" name="q11" value="correcto" required> A. La cantidad de soluto que se disuelve en una cantidad dada de solvente a una temperatura específica.</label><br>
+            <label><input type="radio" name="q11" value="incorrecto" required> B. La velocidad a la que el soluto se disuelve en el solvente.</label><br>
+            <label><input type="radio" name="q11" value="incorrecto" required> C. La temperatura a la cual el solvente se convierte en soluto.</label><br>
+            <label><input type="radio" name="q11" value="incorrecto" required> D. La densidad del soluto.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>12. ¿Qué factor no afecta la solubilidad de un soluto en un solvente?</label>
+        <div class="options">
+            <label><input type="radio" name="q12" value="correcto" required> A. La presión (para solutos sólidos en líquidos).</label><br>
+            <label><input type="radio" name="q12" value="incorrecto" required> B. La temperatura.</label><br>
+            <label><input type="radio" name="q12" value="incorrecto" required> C. La naturaleza del soluto y del solvente.</label><br>
+            <label><input type="radio" name="q12" value="incorrecto" required> D. La agitación o mezcla.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>13. ¿Qué ocurre con el punto de ebullición de una solución al añadir más soluto?</label>
+        <div class="options">
+            <label><input type="radio" name="q13" value="correcto" required> A. Aumenta.</label><br>
+            <label><input type="radio" name="q13" value="incorrecto" required> B. Disminuye.</label><br>
+            <label><input type="radio" name="q13" value="incorrecto" required> C. Permanece igual.</label><br>
+            <label><input type="radio" name="q13" value="incorrecto" required> D. Se convierte en el punto de congelación.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>14. ¿Qué sucede con el punto de fusión de una solución cuando se añade un soluto?</label>
+        <div class="options">
+            <label><input type="radio" name="q14" value="correcto" required> A. Disminuye.</label><br>
+            <label><input type="radio" name="q14" value="incorrecto" required> B. Aumenta.</label><br>
+            <label><input type="radio" name="q14" value="incorrecto" required> C. Permanece igual.</label><br>
+            <label><input type="radio" name="q14" value="incorrecto" required> D. Se convierte en el punto de ebullición.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>15. ¿Qué propiedad de las soluciones se mide en partes por millón (ppm)?</label>
+        <div class="options">
+            <label><input type="radio" name="q15" value="correcto" required> A. La concentración de soluto en una solución muy diluida.</label><br>
+            <label><input type="radio" name="q15" value="incorrecto" required> B. La densidad de la solución.</label><br>
+            <label><input type="radio" name="q15" value="incorrecto" required> C. El punto de ebullición de la solución.</label><br>
+            <label><input type="radio" name="q15" value="incorrecto" required> D. La viscosidad de la solución.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>16. ¿Cómo afecta la temperatura la solubilidad de los gases en líquidos?</label>
+        <div class="options">
+            <label><input type="radio" name="q16" value="correcto" required> A. A mayor temperatura, menor solubilidad.</label><br>
+            <label><input type="radio" name="q16" value="incorrecto" required> B. A mayor temperatura, mayor solubilidad.</label><br>
+            <label><input type="radio" name="q16" value="incorrecto" required> C. La temperatura no afecta la solubilidad.</label><br>
+            <label><input type="radio" name="q16" value="incorrecto" required> D. La solubilidad es máxima a temperaturas intermedias.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>17. ¿Cuál de los siguientes no es un componente de una solución?</label>
+        <div class="options">
+            <label><input type="radio" name="q17" value="correcto" required> A. Solvatación.</label><br>
+            <label><input type="radio" name="q17" value="incorrecto" required> B. Soluto.</label><br>
+            <label><input type="radio" name="q17" value="incorrecto" required> C. Solvente.</label><br>
+            <label><input type="radio" name="q17" value="incorrecto" required> D. Fase dispersante.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>18. ¿Cómo se llama el proceso por el cual una sustancia se disuelve en otra?</label>
+        <div class="options">
+            <label><input type="radio" name="q18" value="correcto" required> A. Disolución.</label><br>
+            <label><input type="radio" name="q18" value="incorrecto" required> B. Fusión.</label><br>
+            <label><input type="radio" name="q18" value="incorrecto" required> C. Ebullición.</label><br>
+            <label><input type="radio" name="q18" value="incorrecto" required> D. Sublimación.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>19. ¿Qué es una solución saturada?</label>
+        <div class="options">
+            <label><input type="radio" name="q19" value="correcto" required> A. Una solución que contiene la cantidad máxima de soluto que se puede disolver a una temperatura específica.</label><br>
+            <label><input type="radio" name="q19" value="incorrecto" required> B. Una solución que contiene más soluto del que se puede disolver.</label><br>
+            <label><input type="radio" name="q19" value="incorrecto" required> C. Una solución que contiene una cantidad muy baja de soluto.</label><br>
+            <label><input type="radio" name="q19" value="incorrecto" required> D. Una solución que no contiene soluto.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>20. ¿Qué es una solución sobresaturada?</label>
+        <div class="options">
+            <label><input type="radio" name="q20" value="correcto" required> A. Una solución que contiene más soluto del que puede disolver a una temperatura dada.</label><br>
+            <label><input type="radio" name="q20" value="incorrecto" required> B. Una solución que tiene menos soluto del necesario para saturarse.</label><br>
+            <label><input type="radio" name="q20" value="incorrecto" required> C. Una solución donde el soluto no se disuelve en absoluto.</label><br>
+            <label><input type="radio" name="q20" value="incorrecto" required> D. Una solución que está en equilibrio con el soluto.</label>
+        </div>
+    </div>
+
+    <!-- Indicador 6.3 -->
+    <h2>Indicador 6.3: Concentraciones de soluciones</h2>
+    <div class="question">
+        <label>21. ¿Qué representa la concentración de una solución?</label>
+        <div class="options">
+            <label><input type="radio" name="q21" value="correcto" required> A. La cantidad de soluto presente en una cantidad dada de solvente.</label><br>
+            <label><input type="radio" name="q21" value="incorrecto" required> B. La cantidad de solvente en una cantidad dada de soluto.</label><br>
+            <label><input type="radio" name="q21" value="incorrecto" required> C. La velocidad a la que se disuelve el soluto.</label><br>
+            <label><input type="radio" name="q21" value="incorrecto" required> D. La densidad de la solución.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>22. ¿Cómo se expresa la concentración en porcentaje en masa?</label>
+        <div class="options">
+            <label><input type="radio" name="q22" value="correcto" required> A. Como la masa de soluto dividida por la masa total de la solución, multiplicada por 100.</label><br>
+            <label><input type="radio" name="q22" value="incorrecto" required> B. Como la masa de solvente dividida por la masa total de la solución, multiplicada por 100.</label><br>
+            <label><input type="radio" name="q22" value="incorrecto" required> C. Como la masa de soluto dividida por la masa de solvente, multiplicada por 100.</label><br>
+            <label><input type="radio" name="q22" value="incorrecto" required> D. Como la masa total de la solución dividida por la masa de soluto, multiplicada por 100.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>23. ¿Cómo se define la concentración en partes por millón (ppm)?</label>
+        <div class="options">
+            <label><input type="radio" name="q23" value="correcto" required> A. Como el número de partes de soluto por millón de partes de la solución.</label><br>
+            <label><input type="radio" name="q23" value="incorrecto" required> B. Como el número de partes de solvente por millón de partes de la solución.</label><br>
+            <label><input type="radio" name="q23" value="incorrecto" required> C. Como el número de partes de soluto por mil partes de la solución.</label><br>
+            <label><input type="radio" name="q23" value="incorrecto" required> D. Como el número de partes de soluto por millón de partes de solvente.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>24. ¿Cómo se calcula la concentración en ppm?</label>
+        <div class="options">
+            <label><input type="radio" name="q24" value="correcto" required> A. Dividiendo la masa de soluto por la masa total de la solución, y luego multiplicando por 10^6.</label><br>
+            <label><input type="radio" name="q24" value="incorrecto" required> B. Multiplicando la masa de soluto por la masa total de la solución, y luego multiplicando por 10^6.</label><br>
+            <label><input type="radio" name="q24" value="incorrecto" required> C. Dividiendo la masa total de la solución por la masa de soluto, y luego multiplicando por 10^6.</label><br>
+            <label><input type="radio" name="q24" value="incorrecto" required> D. Dividiendo la masa de soluto por la masa total de la solución, y luego multiplicando por 10^3.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>25. ¿Cuál es la concentración en ppm si se disuelven 2 mg de soluto en 1 litro de agua?</label>
+        <div class="options">
+            <label><input type="radio" name="q25" value="correcto" required> A. 2 ppm.</label><br>
+            <label><input type="radio" name="q25" value="incorrecto" required> B. 200 ppm.</label><br>
+            <label><input type="radio" name="q25" value="incorrecto" required> C. 20 ppm.</label><br>
+            <label><input type="radio" name="q25" value="incorrecto" required> D. 0.2 ppm.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>26. ¿Qué significa una concentración de 1% en masa?</label>
+        <div class="options">
+            <label><input type="radio" name="q26" value="correcto" required> A. Que hay 1 gramo de soluto por cada 100 gramos de solución.</label><br>
+            <label><input type="radio" name="q26" value="incorrecto" required> B. Que hay 1 gramo de soluto por cada 1 gramo de solución.</label><br>
+            <label><input type="radio" name="q26" value="incorrecto" required> C. Que hay 1 gramo de solvente por cada 100 gramos de solución.</label><br>
+            <label><input type="radio" name="q26" value="incorrecto" required> D. Que hay 1 gramo de soluto por cada 1 gramo de solvente.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>27. ¿Cómo se puede aumentar la concentración de una solución?</label>
+        <div class="options">
+            <label><input type="radio" name="q27" value="correcto" required> A. Añadiendo más soluto.</label><br>
+            <label><input type="radio" name="q27" value="incorrecto" required> B. Añadiendo más solvente.</label><br>
+            <label><input type="radio" name="q27" value="incorrecto" required> C. Calentando la solución.</label><br>
+            <label><input type="radio" name="q27" value="incorrecto" required> D. Enfriando la solución.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>28. ¿Cómo se puede reducir la concentración de una solución?</label>
+        <div class="options">
+            <label><input type="radio" name="q28" value="correcto" required> A. Añadiendo más solvente.</label><br>
+            <label><input type="radio" name="q28" value="incorrecto" required> B. Añadiendo más soluto.</label><br>
+            <label><input type="radio" name="q28" value="incorrecto" required> C. Calentando la solución.</label><br>
+            <label><input type="radio" name="q28" value="incorrecto" required> D. Enfriando la solución.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>29. ¿Qué representa la concentración molar (molaridad) de una solución?</label>
+        <div class="options">
+            <label><input type="radio" name="q29" value="correcto" required> A. El número de moles de soluto por litro de solución.</label><br>
+            <label><input type="radio" name="q29" value="incorrecto" required> B. El número de moles de solvente por litro de solución.</label><br>
+            <label><input type="radio" name="q29" value="incorrecto" required> C. El número de moles de soluto por kilogramo de solvente.</label><br>
+            <label><input type="radio" name="q29" value="incorrecto" required> D. El número de moles de soluto por mililitro de solución.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>30. ¿Cómo se calcula la concentración en molaridad?</label>
+        <div class="options">
+            <label><input type="radio" name="q30" value="correcto" required> A. Dividiendo el número de moles de soluto por el volumen de la solución en litros.</label><br>
+            <label><input type="radio" name="q30" value="incorrecto" required> B. Dividiendo el número de moles de soluto por el volumen de la solución en mililitros.</label><br>
+            <label><input type="radio" name="q30" value="incorrecto" required> C. Multiplicando el número de moles de soluto por el volumen de la solución en litros.</label><br>
+            <label><input type="radio" name="q30" value="incorrecto" required> D. Multiplicando el número de moles de soluto por el volumen de la solución en mililitros.</label>
+        </div>
+    </div>
+
+    <!-- Indicador 6.4 -->
+    <h2>Indicador 6.4: Molaridad, molalidad, normalidad y fracción molar</h2>
+    <div class="question">
+        <label>31. ¿Qué es la molalidad de una solución?</label>
+        <div class="options">
+            <label><input type="radio" name="q31" value="correcto" required> A. El número de moles de soluto por kilogramo de solvente.</label><br>
+            <label><input type="radio" name="q31" value="incorrecto" required> B. El número de moles de soluto por litro de solución.</label><br>
+            <label><input type="radio" name="q31" value="incorrecto" required> C. El número de gramos de soluto por kilogramo de solvente.</label><br>
+            <label><input type="radio" name="q31" value="incorrecto" required> D. El número de moles de soluto por mililitro de solvente.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>32. ¿Cómo se calcula la molalidad de una solución?</label>
+        <div class="options">
+            <label><input type="radio" name="q32" value="correcto" required> A. Dividiendo el número de moles de soluto por la masa del solvente en kilogramos.</label><br>
+            <label><input type="radio" name="q32" value="incorrecto" required> B. Dividiendo el número de moles de soluto por la masa del solvente en gramos.</label><br>
+            <label><input type="radio" name="q32" value="incorrecto" required> C. Multiplicando el número de moles de soluto por la masa del solvente en kilogramos.</label><br>
+            <label><input type="radio" name="q32" value="incorrecto" required> D. Multiplicando el número de moles de soluto por la masa del solvente en gramos.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>33. ¿Qué representa la fracción molar de un componente en una solución?</label>
+        <div class="options">
+            <label><input type="radio" name="q33" value="correcto" required> A. La proporción del número de moles de ese componente en relación con el número total de moles en la solución.</label><br>
+            <label><input type="radio" name="q33" value="incorrecto" required> B. La proporción del número de moles de solvente en relación con el número total de moles en la solución.</label><br>
+            <label><input type="radio" name="q33" value="incorrecto" required> C. La proporción del número de moles de soluto en relación con el número total de gramos en la solución.</label><br>
+            <label><input type="radio" name="q33" value="incorrecto" required> D. La proporción del número de moles de soluto en relación con el número total de gramos de solvente.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>34. ¿Cómo se calcula la fracción molar de un componente?</label>
+        <div class="options">
+            <label><input type="radio" name="q34" value="correcto" required> A. Dividiendo el número de moles de ese componente por el número total de moles de todos los componentes en la solución.</label><br>
+            <label><input type="radio" name="q34" value="incorrecto" required> B. Dividiendo el número de moles de ese componente por el número total de moles del solvente en la solución.</label><br>
+            <label><input type="radio" name="q34" value="incorrecto" required> C. Multiplicando el número de moles de ese componente por el número total de moles de todos los componentes en la solución.</label><br>
+            <label><input type="radio" name="q34" value="incorrecto" required> D. Multiplicando el número de moles de ese componente por el número total de moles del solvente en la solución.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>35. ¿Qué es la normalidad de una solución?</label>
+        <div class="options">
+            <label><input type="radio" name="q35" value="correcto" required> A. El número de equivalentes de soluto por litro de solución.</label><br>
+            <label><input type="radio" name="q35" value="incorrecto" required> B. El número de moles de soluto por kilogramo de solvente.</label><br>
+            <label><input type="radio" name="q35" value="incorrecto" required> C. El número de moles de soluto por litro de solución.</label><br>
+            <label><input type="radio" name="q35" value="incorrecto" required> D. El número de equivalentes de solvente por litro de solución.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>36. ¿Cómo se calcula la normalidad de una solución?</label>
+        <div class="options">
+            <label><input type="radio" name="q36" value="correcto" required> A. Dividiendo el número de equivalentes de soluto por el volumen de la solución en litros.</label><br>
+            <label><input type="radio" name="q36" value="incorrecto" required> B. Dividiendo el número de moles de soluto por el volumen de la solución en litros.</label><br>
+            <label><input type="radio" name="q36" value="incorrecto" required> C. Multiplicando el número de equivalentes de soluto por el volumen de la solución en litros.</label><br>
+            <label><input type="radio" name="q36" value="incorrecto" required> D. Multiplicando el número de moles de soluto por el volumen de la solución en litros.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>37. ¿Cómo se calcula el número de equivalentes de un soluto?</label>
+        <div class="options">
+            <label><input type="radio" name="q37" value="correcto" required> A. Dividiendo la masa del soluto por su equivalente gramático.</label><br>
+            <label><input type="radio" name="q37" value="incorrecto" required> B. Dividiendo la masa del soluto por su masa molar.</label><br>
+            <label><input type="radio" name="q37" value="incorrecto" required> C. Multiplicando la masa del soluto por su equivalente gramático.</label><br>
+            <label><input type="radio" name="q37" value="incorrecto" required> D. Multiplicando la masa del soluto por su masa molar.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>38. ¿Cuál es la fracción molar de un componente en una solución si el número de moles de ese componente es igual al número total de moles en la solución?</label>
+        <div class="options">
+            <label><input type="radio" name="q38" value="correcto" required> A. 1.</label><br>
+            <label><input type="radio" name="q38" value="incorrecto" required> B. 0.5.</label><br>
+            <label><input type="radio" name="q38" value="incorrecto" required> C. 0.1.</label><br>
+            <label><input type="radio" name="q38" value="incorrecto" required> D. 0.01.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>39. ¿Qué propiedad se mide en fracción molar?</label>
+        <div class="options">
+            <label><input type="radio" name="q39" value="correcto" required> A. La proporción de la cantidad de sustancia de un componente en una mezcla o solución.</label><br>
+            <label><input type="radio" name="q39" value="incorrecto" required> B. La densidad de un componente en una solución.</label><br>
+            <label><input type="radio" name="q39" value="incorrecto" required> C. La concentración de un componente en una solución.</label><br>
+            <label><input type="radio" name="q39" value="incorrecto" required> D. La cantidad de calor en una solución.</label>
+        </div>
+    </div>
+
+    <div class="question">
+        <label>40. ¿Qué ocurre cuando la fracción molar de un componente es cero?</label>
+        <div class="options">
+            <label><input type="radio" name="q40" value="correcto" required> A. Que el componente no está presente en la solución.</label><br>
+            <label><input type="radio" name="q40" value="incorrecto" required> B. Que el componente es el único presente en la solución.</label><br>
+            <label><input type="radio" name="q40" value="incorrecto" required> C. Que el componente está presente en su máxima cantidad.</label><br>
+            <label><input type="radio" name="q40" value="incorrecto" required> D. Que el componente está presente en una proporción mayor que otros componentes.</label>
+        </div>
+    </div>
+
+    <button class="submit-btn" onclick="calculateGrade()">Obtener Calificación</button>
+</div>
+
+<div class="popup" id="finalPopup" style="display: none;">
+    <div class="popup-content">
+        <h2>Resultado de la Evaluación</h2>
+        <p id="nombreFinal"></p>
+        <p id="nieFinal"></p>
+        <p id="gradeFinal"></p>
+        <button onclick="closePopup()">Cerrar</button>
+    </div>
+</div>
+
+<script>
+    const authorizedNIEs = [
+        "4839280", "19711634", "4839293", "6297544", "19711644",
+        "3850927", "19711635", "4267835", "3293986", "19711278",
+        "19711637", "4267839", "19806177", "4839298", "4267832",
+        "4267843", "4839279", "4839301", "19964688"
+    ];
+
+    let timer;
+    let totalSeconds = 1800;
+
+    window.onload = function() {
+        document.getElementById('popup').style.display = 'flex';
+    };
+
+    function validatePopup() {
+        const nombre = document.getElementById('nombre').value;
+        const nie = document.getElementById('nie').value;
+
+        if (nombre === "" || nie === "") {
+            alert("Por favor, complete todos los campos.");
+        } else if (!authorizedNIEs.includes(nie)) {
+            alert("NIE no autorizado.");
+        } else {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('evaluation').style.display = 'block';
+            startTimer();
         }
+    }
 
-        function loadQuiz() {
-            const quizContainer = document.getElementById('quiz');
-            quizContainer.innerHTML = '';
-            quizData.forEach((data, index) => {
-                const questionContainer = document.createElement('div');
-                questionContainer.className = 'question';
+    function startTimer() {
+        timer = setInterval(function() {
+            totalSeconds--;
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            document.getElementById('timer').textContent = `Tiempo restante: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
-                const questionTitle = document.createElement('h3');
-                questionTitle.innerText = `${index + 1}. ${data.question}`;
-                questionContainer.appendChild(questionTitle);
-
-                const optionsList = document.createElement('ul');
-                optionsList.className = 'options';
-
-                shuffle(data.answers).forEach(answer => {
-                    const option = document.createElement('li');
-                    const optionLabel = document.createElement('label');
-                    const optionInput = document.createElement('input');
-                    optionInput.type = 'radio';
-                    optionInput.name = `question${index}`;
-                    optionInput.value = answer.correct;
-                    optionLabel.appendChild(optionInput);
-                    optionLabel.appendChild(document.createTextNode(answer.text));
-                    option.appendChild(optionLabel);
-                    optionsList.appendChild(option);
-                });
-
-                questionContainer.appendChild(optionsList);
-                quizContainer.appendChild(questionContainer);
-            });
-        }
-
-        function submitQuiz() {
-            if (attempt >= maxAttempts) {
-                alert('Has alcanzado el número máximo de intentos.');
-                return;
+            if (totalSeconds <= 0) {
+                clearInterval(timer);
+                calculateGrade();
             }
+        }, 1000);
+    }
 
-            const resultsContainer = document.getElementById('results');
-            const answers = document.querySelectorAll('input[type="radio"]:checked');
-            let score = 0;
+    function calculateGrade() {
+        const totalQuestions = document.querySelectorAll('.question').length;
+        const correctAnswers = document.querySelectorAll('input[type="radio"]:checked[value="correcto"]').length;
+        const maxPoints = 10;
+        const grade = (correctAnswers / totalQuestions) * maxPoints;
 
-            quizData.forEach((data, index) => {
-                const selected = answers[index] ? answers[index].value === 'true' : null;
-                if (selected === true) {
-                    score += 0.4; // Each correct answer is worth 0.4 points
-                }
-            });
+        document.getElementById('nombreFinal').textContent = "Nombre: " + document.getElementById('nombre').value;
+        document.getElementById('nieFinal').textContent = "NIE: " + document.getElementById('nie').value;
+        document.getElementById('gradeFinal').textContent = "Su calificación es: " + grade.toFixed(2) + " de " + maxPoints;
 
-            score = Math.round(score * 10) / 10; // Round to one decimal place
-            let feedback = quizData.map((data, index) => {
-                const selected = answers[index] ? answers[index].value === 'true' : null;
-                let result;
-                if (selected === null) {
-                    result = "No contestada";
-                } else if (selected === true) {
-                    result = "Correcta";
-                } else {
-                    result = "Incorrecta";
-                }
-                return `<p>${index + 1}. ${result}</p>`;
-            }).join("");
+        document.getElementById('finalPopup').style.display = 'flex';
+    }
 
-            resultsContainer.innerHTML = `<h3>Resultados:</h3><p>Puntaje: ${score} / 10</p>${feedback}`;
+    function closePopup() {
+        document.getElementById('finalPopup').style.display = 'none';
+    }
+</script>
 
-            attempt++;
-            if (attempt >= maxAttempts) {
-                alert('Has alcanzado el número máximo de intentos.');
-            }
-        }
-
-        document.getElementById('submit').addEventListener('click', submitQuiz);
-
-        loadQuiz();
-    </script>
 </body>
 </html>
-
